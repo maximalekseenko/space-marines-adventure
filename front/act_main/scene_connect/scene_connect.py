@@ -26,6 +26,9 @@ class Scene_Connect(Scene):
 
 
     def On_Render(self) -> None:
-        pass
+        theatre.client.Connect()
+        if theatre.client.is_connected:
+            from front.act_game import Act_Game
+            theatre.current_act = Act_Game()
 
 
