@@ -70,12 +70,10 @@ class Server:
         print(f"- server: found game for '{address}' with id of {_valid_game.id}.")
 
         # create thread
-        _thread.start_new_thread(self.threaded_client, (connection, address, _valid_game))
+        _thread.start_new_thread(self.Threaded_Client, (connection, address, _valid_game))
 
 
-
-
-    def threaded_client(self, connection:socket.socket, address:tuple, game:Game):
+    def Threaded_Client(self, connection:socket.socket, address:tuple, game:Game):
         
         # log tread creation
         print(f"- server: created a thread for '{address}'.")
