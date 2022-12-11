@@ -5,13 +5,14 @@ import pickle
 
 class Client:
     def __init__(self, address):
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client = socket.socket()
         self.address = address
 
         self.is_connected = False
 
 
     def Connect(self):
+        self.client = socket.socket()
         if self.is_connected:
             print("- client: already connected.")
             return True
@@ -20,7 +21,8 @@ class Client:
             print("- client: connection success.")
             self.is_connected = True
             return True
-        except:
+        except Exception as e:
+            print(e)
             print("- client: connection failed.")
             self.is_connected = False
             return False
