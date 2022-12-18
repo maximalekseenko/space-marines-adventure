@@ -43,7 +43,7 @@ class Server:
             connection, address = self.socket.accept()
             print(f"- server: new connection from '{address}'.")
 
-            self.Connect_To_Game(connection, tuple(address))
+            self.Connect_To_Game(connection, address)
 
 
     def Connect_To_Game(self, connection:socket.socket, address:tuple) -> None:

@@ -24,18 +24,18 @@ class Game:
         return True
 
 
-    def Handle(self, address:str, request:dict) -> None:
+    def Handle(self, address:tuple, request:dict) -> None:
         """Handle user `request` by their `address`."""
 
         # join - add/move address to the corresponding list
         if request['name'] == "join":
             self.Join(address, request['value'])
             
-        # if request['name'] == "join":
-        #     self.players.append()
+        elif request['name'] == "select":
+            print(request['value'])
 
     
-    def Join(self, address:str, dest:str) -> None:
+    def Join(self, address:tuple, dest:str) -> None:
         """Add/move `address` to the list, specified by `dest`:
         *   `"player"` - join as player. join nothing if cannot add to players.
         *   `"AAA"` - join as AAA. 
@@ -55,9 +55,19 @@ class Game:
         
 
 
-    def Get_Data(self, address:str) -> dict:
+    def Get_Data(self, address:tuple) -> dict:
         """Get data for the local game of the player by player's `address`."""
-        print(self.players)
+        # return {
+        #     'players': [player.address for player in self.players],
+        # }
         return {
-            'AA': [str(player.address) for player in self.players]
+            'stage_type': "selection",
+            'title':        "AAA",
+            'description':  "AAAAAA AAA AAAAA",
+            'options':      [
+                ['text aaa', 'a', 'a.png', True, []],
+                ['text bbb', 'b', 'b.png', True, []],
+                ['text ccc', 'c', 'c.png', False, []],
+                ['text ddd', 'd', 'd.png', True, []],
+            ],
         }

@@ -9,42 +9,55 @@ class Act_Game(Act):
         super().__init__()
 
         # scenes
+        from .scene_selection import Scene_Selection
+        self.scene_selection = Scene_Selection(self)
 
-        from ..act_main.scene_main.element_button import Element_Button
-        self.buttons = [
-            Element_Button(self, "select A", lambda: theatre.client.Send({'name':"select", 'value':"A"})),
-            Element_Button(self, "select B", lambda: theatre.client.Send({'name':"select", 'value':"B"})),
-            Element_Button(self, "select C", lambda: theatre.client.Send({'name':"select", 'value':"C"})),
-            Element_Button(self, "select D", lambda: theatre.client.Send({'name':"select", 'value':"D"}))]
+
+        self.current_stage_type = None
+
+        theatre.client.Handle_Request = self.Handle_Data_From_Server
+
+        theatre.client.Send({'name':"update"})
+
+
+    def Handle_Data_From_Server(self, data:dict):
+        if data['stage_type'] == "selection":
+            if self.current_stage_type == data['stage_type']:
+
+                # set data
+                self.scene_selection.Set_Data(data)
+
+            else:
+                # set current stage type
+                self.current_stage_type = data['stage_type']
+
+                # open/close scenes
+                self.scene_selection.Open()
+
+                # set data
+                self.scene_selection.Set_Data(data)
 
     
     def On_Update(self):
-        BUTTONS_TOP = 100
-        BUTTON_STEP = 10
-        BUTTON_SIZE = [100,25]
-        BUTTON_CENTEX = self.surface.get_width() / 2
-
-        for i_button in range(len(self.buttons)):
-            self.buttons[i_button].rect = pygame.Rect(0, 0, *BUTTON_SIZE)
-            self.buttons[i_button].rect.centery = i_button * (BUTTON_SIZE[1] + BUTTON_STEP) + BUTTONS_TOP
-            self.buttons[i_button].rect.centerx = BUTTON_CENTEX
-
-            self.buttons[i_button].Update()
+        self.scene_selection.Update()
 
 
     def On_Open(self) -> None:
+        self.scene_selection.Close()
+
+        # update
         self.Update()
 
     
     def On_Close(self) -> None:
-        pass
+        self.scene_selection.Close()
 
 
     def On_Handle(self, event: pygame.event.Event) -> None:
-        for button in self.buttons: button.Handle(event)
+        if self.scene_selection.Handle(event): return
 
 
     def On_Render(self) -> None:
         self.surface.fill("#000000")
 
-        for button in self.buttons: button.Render()
+        if self.scene_selection.Render(): return

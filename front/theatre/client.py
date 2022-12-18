@@ -14,7 +14,7 @@ class Client:
         self.game_id = -1
 
 
-    def Connect(self):
+    def Connect(self) -> bool:
 
         # create socket
         self.socket = socket.socket()
@@ -34,7 +34,7 @@ class Client:
             return False
 
         # send settings
-        self.socket.send(json.dumps({'name':"join", 'value':"player"}).encode())
+        self.socket.send(json.dumps({'name':"labyrinth", 'players':"-1"}).encode())
 
         # get game id
         self.game_id = int(self.socket.recv(1024).decode())
@@ -69,6 +69,12 @@ class Client:
             try:
                 # get data
                 data = json.loads(self.socket.recv(4096).decode())
-                print(data)
-            except: break
+                self.Handle_Request(data)
+            except Exception as e: 
+                print(f"-connection lost due to:", e)
+                break
         self.socket.close()
+
+
+    def Handle_Request(self, data:dict) -> None:
+        print(data)
