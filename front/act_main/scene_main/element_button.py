@@ -15,7 +15,7 @@ class Element_Button(Element):
 
         self.text_surface = pygame.Surface((0,0))
         self.text_rect = pygame.Rect(0,0,0,0)
-        self.text_font = pygame.font.Font(None, 30)
+        self.text_font = theatre.FONT_OLDENGLISHTEXTMT_30
 
 
     def On_Update(self):
