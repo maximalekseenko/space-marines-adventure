@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python3 ./src_editor/main.py
+python3 ./src/main.py editor
