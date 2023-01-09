@@ -1,14 +1,13 @@
-# from .heroes import Hero_Black, Hero_Red, Hero_Green, Hero_Yellow, Hero_Blue, Hero_Purple, Hero_Cyan, Hero_White
-from .tiles import Tile_Console, Tile_Passage, Tile_Wall
+from .tiles import Tile_Console, Tile_Passage, Tile_Wall, Tile_Portal
 from .missions import Mission1
+from .entities import Entity_HeroChainsword, Entity_HeroBoltgun, Entity_HeroFlamer, Entity_NecronWarrior
 
 
 ASSETS = [
-    # # Heroes
-    # Hero_Black, Hero_Red, Hero_Green, Hero_Yellow, Hero_Blue, Hero_Purple, Hero_Cyan, Hero_White, 
-    
+    # # entities
+    Entity_HeroChainsword, Entity_HeroBoltgun, Entity_HeroFlamer, Entity_NecronWarrior, 
     # tiles
-    Tile_Console, Tile_Passage, Tile_Wall,
+    Tile_Console, Tile_Passage, Tile_Wall, Tile_Portal,
     
     # missions
     Mission1,

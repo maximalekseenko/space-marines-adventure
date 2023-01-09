@@ -1,6 +1,7 @@
 # import os
 from .tile import Tile
 from .mission import Mission
+from .entity import Entity
 
 
 
@@ -8,16 +9,19 @@ class DataBase:
     """Class that witholds all data."""
 
     def __init__(self) -> None:
-        self.list_tile:list[Tile] = list()
+        self.list_tile:list[type[Tile]] = list()
         '''List of tiles located in database. \n\n Do not access direcly! Use corresponding functions!'''
-        self.list_mission:list[Mission] = list()
+        self.list_mission:list[type[Mission]] = list()
         '''List of missions located in database. \n\n Do not access direcly! Use corresponding functions!'''
+        self.list_entity:list[type[Entity]] = list()
+        '''List of entities located in database. \n\n Do not access direcly! Use corresponding functions!'''
 
 
-    def Import(self, __assets:list[Tile|Mission]):
+    def Import(self, __assets:list[type[Tile]|type[Mission]|type[Entity]]):
         for __asset in __assets: 
             if Tile in __asset.mro(): self.Import_Tile(__asset)
-            if Mission in __asset.mro(): self.Import_Mission(__asset)
+            elif Mission in __asset.mro(): self.Import_Mission(__asset)
+            elif Entity in __asset.mro(): self.Import_Entity(__asset)
 
 
     # ----- List imports -----
@@ -29,7 +33,7 @@ class DataBase:
 
         # set database
         __asset.DATABASE = self
-        
+
         # add
         self.list_tile.append(__asset)
 
@@ -47,6 +51,19 @@ class DataBase:
         self.list_mission.append(__asset)
 
 
+    def Import_Entity(self, __asset:type[Entity]) -> None:
+        """Imports entity to the database."""
+
+        # validate
+        if Entity not in __asset.mro(): raise TypeError("Attempt to import of incorrect type.")
+
+        # set database
+        __asset.DATABASE = self
+
+        # add
+        self.list_entity.append(__asset)
+
+
     # ----- List gets -----
     def Get_Tile(self, __key:str) -> type[Tile]:
         """Returns tile type from database by given key."""
@@ -60,6 +77,14 @@ class DataBase:
         """Returns mission type from database by given key."""
 
         for __asset in self.list_mission:
+            if __asset.KEY == __key:
+                return __asset
+
+
+    def Get_Entity(self, __key:str) -> type[Entity]:
+        """Returns tile type from database by given key."""
+
+        for __asset in self.list_entity:
             if __asset.KEY == __key:
                 return __asset
 

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING: 
     # from .campaign import Campaign
     # from .map import Map
-    # from .entity import Entity
+    from .entity import Entity
     from .tile import Tile
     from .database import DataBase
 
@@ -28,29 +28,34 @@ class Mission:
 
     def __init__(self, __campaign:any) -> None:
 
-        # create parameters
+        # create current
+        ## campaign
         self.campaign = __campaign
-        '''Current campaign. \n\n Do not edit directly! Use corresponding functions!'''
+        '''Current campaign.'''
 
+        ## variables
         self.variables:dict[str, any] = dict()
-        '''Current variables. \n\n Do not edit directly! Use corresponding functions!'''
+        '''Current variables.'''
 
-        # entity
-        self.entities:list[any] = list()
-        '''Current entities. \n\n Do not edit directly! Use corresponding functions!'''
+        ## entity
+        self.entities:list[Entity] = list()
+        '''Current entities.'''
 
         self.entity_free_id:int = 0
         '''Free id to give to newly created entity.'''
 
-        # tile
+        self.entity_grid:list[list[Tile]] = [[None for _ in range(self.MAP_SIZE[1])] for _ in range(self.MAP_SIZE[0])]  
+        '''Entities by position.'''
+
+        ## tile
         self.tiles:list[Tile] = list()
         '''Current tiles. \n\n Do not edit directly! Use corresponding functions!'''
 
         self.tiles_free_id:int = 0
         '''Free id to give to newly created tile.'''
 
-        self.tile_grid:list[list[list[Tile]]] = [[list() for _ in range(self.MAP_SIZE[1])] for _ in range(self.MAP_SIZE[0])]  
-        '''Tiles sorted by position and layer.'''
+        self.tile_grid:list[list[Tile]] = [[None for _ in range(self.MAP_SIZE[1])] for _ in range(self.MAP_SIZE[0])]  
+        '''Tiles by position.'''
 
         # add defaults
         ## variables
@@ -58,106 +63,14 @@ class Mission:
             self.Variable_Create(__key, __value)
 
         ## entities
-        # TODO
+        for __key, __variables in self.ENTITIES:
+            self.Entity_Create(__key, __variables)
 
         ## tiles
         for __key, __variables in self.TILES:
             self.Tile_Create(__key, __variables)
 
 
-
-    # ----- Campaign functions -----
-    # ----- Variable functions -----
-    def Variable_Set(self, __key:str, __value:any) -> None:
-        self.variables[__key] = __value
-
-
-    def Variable_Create(self, __key:str, __value:any=None) -> None:
-        self.variables[__key] = __value
-
-
-    def Variable_Exists(self, __key:str) -> bool:
-        return __key in self.variables
-
-
-    def Variable_Get(self, __key:str) -> any:
-        return self.variables[__key]
-
-
-    # ----- Entities functions -----
-    def Entity_Add(self, __entity_type:type[Entity]) -> None:
-
-        # create new entity and give it a new id
-        __new_entity = __entity_type(self.entity_free_id)
-        self.entity_free_id += 1
-
-        # add new entity to the list
-        self.entities.append(__new_entity)
-
-
-    def Entity_Rem(self, __entity_id:int) -> None:
-        
-        # find entity by id
-        __todel_entity = self.Entity_Get(__entity_id)
-
-        # delete
-        self.entities.remove(__todel_entity)
-
-
-    def Entity_Get(self, __entity_id:int) -> Entity:
-        for __entity in self.entities:
-            if __entity.id == __entity_id:
-                return __entity
-
-        # not found
-        return None
-
-
-    # ----- Tiles functions -----
-    def Tile_Create(self, __key:str, __variables:dict[str, any] = dict()):
-
-        # create new entity and give it a new id
-        __new_tile = self.DATABASE.Get_Tile(__key)(self.tiles_free_id)
-        self.tiles_free_id += 1
-
-        # set variables
-        for __key, __value in __variables.items():
-            __new_tile.Variables_Set(__key, __value)
-
-        # add new entity to the lists
-        ## global
-        self.tiles.append(__new_tile)
-        ## positional
-        self.tile_grid[__new_tile.variables['x']][__new_tile.variables['y']].append(__new_tile)
-
-
-
-    def Tile_Rem(self, __tile:type[Tile]):
-        pass
-
-
-
-    def Get_Data(self):
-        return {
-            'key': self.KEY,
-            'var': self.VARIABLES,
-            'ent': self.ENTITIES,
-            'map': self.MAP.Get_Data()
-        }
-
-
-    def Handle_Hero_Request(self, request:dict):
-        if self.stage == "preparation":
-            self.Handle_Hero_Preparation(request)
-
-
-    def _Handle_Hero_Preparation(self, request:dict):
-        if request['type'] == "select":
-            pass
-
-
-
-    
     def __abs_repr__(self) -> str:
         __ret_str =  f"Mission(abstract):"
         __ret_str += f"\n├key: {self.KEY}"
@@ -199,3 +112,88 @@ class Mission:
 
         # return
         return __ret_str
+
+
+    # ----- Campaign functions -----
+    # ----- Variable functions -----
+    def Variable_Set(self, __key:str, __value:any) -> None:
+        self.variables[__key] = __value
+
+
+    def Variable_Create(self, __key:str, __value:any=None) -> None:
+        self.variables[__key] = __value
+
+
+    def Variable_Exists(self, __key:str) -> bool:
+        return __key in self.variables
+
+
+    def Variable_Get(self, __key:str) -> any:
+        return self.variables[__key]
+
+
+    # ----- Entities functions -----
+    def Entity_Create(self, __key:str, __variables:dict[str, any] = dict()):
+
+        # create new entity and give it a new id
+        __new_entity = self.DATABASE.Get_Entity(__key)(self.entity_free_id)
+        self.entity_free_id += 1
+
+        # set variables
+        for __key, __value in __variables.items():
+            __new_entity.Variables_Set(__key, __value)
+
+        # add new entity to the lists
+        ## global
+        self.entities.append(__new_entity)
+        ## positional
+        self.entity_grid[__new_entity.Variables_Get('x')][__new_entity.Variables_Get('y')] = __new_entity
+
+
+    def Entity_Remove(self, __key:str):
+        pass
+
+
+    def Entity_Get_By_Position(self, __x, __y) -> Entity:
+        return self.entity_grid[__x][__y]
+
+
+    def Entity_Get_By_Id(self, __id) -> Entity:
+        for __entity in self.entities:
+            if __entity.id == __id:
+                return __entity
+        return None
+
+
+
+    # ----- Tiles functions -----
+    def Tile_Create(self, __key:str, __variables:dict[str, any] = dict()):
+
+        # create new tile and give it a new id
+        __new_tile = self.DATABASE.Get_Tile(__key)(self.tiles_free_id)
+        self.tiles_free_id += 1
+
+        # set variables
+        for __key, __value in __variables.items():
+            __new_tile.Variables_Set(__key, __value)
+
+        # add new tile to the lists
+        ## global
+        self.tiles.append(__new_tile)
+        ## positional
+        self.tile_grid[__new_tile.Variables_Get('x')][__new_tile.Variables_Get('y')] = __new_tile
+
+
+    def Tile_Remove(self, __tile:type[Tile]):
+        pass
+
+
+    def Tile_Get_By_Position(self, __x, __y) -> Tile:
+        return self.tile_grid[__x][__y]
+
+
+    def Tile_Get_By_Id(self, __id) -> Tile:
+        for __tile in self.tiles:
+            if __tile.id == __id:
+                return __tile
+        return None
