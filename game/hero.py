@@ -2,10 +2,12 @@ from .equipment import Equipment
 
 
 class Hero:
+    TYPECODE = b'\x01'
 
-    def __init__(self, ACTIONS:int=4, RANGE:int=6, icon=None) -> None:
-        self.ACTIONS = ACTIONS
-        self.RANGE = RANGE
+    RANGE:int = 6
+    ACTIONS:int = 4
+
+    def __init__(self) -> None:
 
         self.wounds_max = 2
         self.wounds = 2

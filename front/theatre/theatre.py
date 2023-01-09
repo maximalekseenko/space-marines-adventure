@@ -15,6 +15,11 @@ class Theatre(Theatre):
         from .client import Client
         self.client = Client(self.SERVER_ADDRESS)
 
+        # /TODO DELETE\
+        from back.database import database
+        database.Import('data/necron_labyrinth/')
+        # \TODO DELETE/
+
 
 
 theatre = Theatre()

@@ -16,6 +16,11 @@ class Game:
         self.players:list[Player] = list()
         '''List of players in this game.'''
 
+        # /TODO:DELETE\
+        from .necron_labyrinth.campaign import NL_Campaign
+        self.campaign = NL_Campaign(self)
+        # \TODO:DELETE/
+
 
 
     def Validate_Settings(self, settings):
@@ -57,17 +62,16 @@ class Game:
 
     def Get_Data(self, address:tuple) -> dict:
         """Get data for the local game of the player by player's `address`."""
+
+        return self.campaign.get_stage().get_data()
         # return {
-        #     'players': [player.address for player in self.players],
+        #     'stage_type': "selection",
+        #     'title':        "AAA",
+        #     'description':  "AAAAAA AAA AAAAA",
+        #     'options':      [
+        #         ['text aaa', 'a', 'a.png', True, []],
+        #         ['text bbb', 'b', 'b.png', True, []],
+        #         ['text ccc', 'c', 'c.png', False, []],
+        #         ['text ddd', 'd', 'd.png', True, []],
+        #     ],
         # }
-        return {
-            'stage_type': "selection",
-            'title':        "AAA",
-            'description':  "AAAAAA AAA AAAAA",
-            'options':      [
-                ['text aaa', 'a', 'a.png', True, []],
-                ['text bbb', 'b', 'b.png', True, []],
-                ['text ccc', 'c', 'c.png', False, []],
-                ['text ddd', 'd', 'd.png', True, []],
-            ],
-        }

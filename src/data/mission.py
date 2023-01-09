@@ -1,16 +1,19 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING: 
-    from .campaign import Campaign
-    from .map import Map
-    from .entity import Entity
+    # from .campaign import Campaign
+    # from .map import Map
+    # from .entity import Entity
     from .tile import Tile
+    from .database import DataBase
 
-
-import back
 
 
 class Mission:
+
+    DATABASE:DataBase
+    '''Instance of database this mission is imported to.'''
+
     KEY:str = ""
 
     MAP_SIZE:tuple[int, int] = (0, 0)
@@ -23,7 +26,7 @@ class Mission:
     '''Default tiles. \n\n Stored as [`<tile key>`, {`<variable key>`, `<variable value>`}] \n\n Export/Import parameter.'''
 
 
-    def __init__(self, __campaign:Campaign) -> None:
+    def __init__(self, __campaign:any) -> None:
 
         # create parameters
         self.campaign = __campaign
@@ -32,19 +35,24 @@ class Mission:
         self.variables:dict[str, any] = dict()
         '''Current variables. \n\n Do not edit directly! Use corresponding functions!'''
 
-        self.entities:list[Entity] = list()
+        # entity
+        self.entities:list[any] = list()
         '''Current entities. \n\n Do not edit directly! Use corresponding functions!'''
 
         self.entity_free_id:int = 0
         '''Free id to give to newly created entity.'''
 
+        # tile
         self.tiles:list[Tile] = list()
         '''Current tiles. \n\n Do not edit directly! Use corresponding functions!'''
 
         self.tiles_free_id:int = 0
         '''Free id to give to newly created tile.'''
 
-        # add defaults to parameters
+        self.tile_grid:list[list[list[Tile]]] = [[list() for _ in range(self.MAP_SIZE[1])] for _ in range(self.MAP_SIZE[0])]  
+        '''Tiles sorted by position and layer.'''
+
+        # add defaults
         ## variables
         for __key, __value in self.VARIABLES.items():
             self.Variable_Create(__key, __value)
@@ -109,15 +117,19 @@ class Mission:
     def Tile_Create(self, __key:str, __variables:dict[str, any] = dict()):
 
         # create new entity and give it a new id
-        __new_tile = back.db.Get_Tile(__key)(self.tiles_free_id)
+        __new_tile = self.DATABASE.Get_Tile(__key)(self.tiles_free_id)
         self.tiles_free_id += 1
 
         # set variables
         for __key, __value in __variables.items():
             __new_tile.Variables_Set(__key, __value)
 
-        # add new entity to the list
+        # add new entity to the lists
+        ## global
         self.tiles.append(__new_tile)
+        ## positional
+        self.tile_grid[__new_tile.variables['x']][__new_tile.variables['y']].append(__new_tile)
+
 
 
     def Tile_Rem(self, __tile:type[Tile]):
@@ -155,7 +167,7 @@ class Mission:
         for __key, __value in self.VARIABLES: __ret_str += f"\n│├{__key}: {__value}"
 
         # entities
-        __ret_str += f"\n├entities: {self.ENTITIES}"
+        # __ret_str += f"\n├entities: {self.ENTITIES}"
         # TODO list
 
         # tiles

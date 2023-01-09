@@ -19,6 +19,11 @@ class Selection:
     TITLE: str
     '''Title that shows on top of this selection.'''
 
+    SELECTOR_IS_PLAYER = False
+
+    OPTIONS_MIN_PER_SELECTOR = 0
+    OPTIONS_MAX_PER_SELECTOR = 0
+
     DESCRIPTION: str
     '''Text that explains what the selection is about.'''
 
