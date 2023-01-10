@@ -9,7 +9,7 @@ class Entity:
     KEY:str = ""
     '''Key for finding this Entity in database'''
 
-    DEFAULT_ATTRS:dict[str, Any] = {
+    ATTRS:dict[str, Any] = {
         'id': -1,
         'x': 0,
         'y': 0,
@@ -34,7 +34,7 @@ class Entity:
         '''Attributes that this Entity has.'''
 
         # set defaults
-        self.Set_Attrs(self.DEFAULT_ATTRS)
+        self.Set_Attrs(self.ATTRS)
 
 
     def __repr__(self) -> str:

@@ -9,7 +9,7 @@ class Tile:
     KEY:str = ""
     '''Key for finding this Tile in database'''
 
-    DEFAULT_ATTRS:dict[str, Any] = {
+    ATTRS:dict[str, Any] = {
         'id': -1,
         'x': 0,
         'y': 0,
@@ -33,7 +33,7 @@ class Tile:
         '''Attributes that this Tile has.'''
 
         # set defaults
-        self.Set_Attrs(self.DEFAULT_ATTRS)
+        self.Set_Attrs(self.ATTRS)
 
     
     def __repr__(self) -> str:

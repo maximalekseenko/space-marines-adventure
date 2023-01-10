@@ -11,7 +11,7 @@ class Entity_HeroChainsword(Entity):
 
 class Entity_HeroBoltgun(Entity):
     KEY = "NLEHeroBoltgun"
-    DEFAULT_ATTRS = {
+    ATTRS = {
         'range':6,
         'actions':4,
         'hero':True,
@@ -20,7 +20,7 @@ class Entity_HeroBoltgun(Entity):
 
 class Entity_HeroFlamer(Entity):
     KEY = "NLTHeroFlamer"
-    DEFAULT_ATTRS = {
+    ATTRS = {
         'range':3,
         'actions':3,
         'hero':True,
@@ -28,6 +28,6 @@ class Entity_HeroFlamer(Entity):
 
 class Entity_NecronWarrior(Entity):
     KEY = "NLTNecronWarrior"
-    DEFAULT_ATTRS = {
+    ATTRS = {
         'enemy':True,
     }

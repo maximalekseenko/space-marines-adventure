@@ -33,22 +33,22 @@ def map():
         print()
 
 map()
-print()
+print(repr(mission))
 
-positions = [0,1,2,3]
-
-import random
-random.shuffle(positions)
 
 portals = mission.Get_Tile({'portal': True}, _all=True)
 
+import random
+random.shuffle(portals)
+
+
 for enemy in mission.Get_Entity({'enemy': True}, _all=True):
-    portal = portals[positions.pop()]
+    portal = portals.pop()
     enemy.Set_Attrs({'x': portal.Get_Attr('x'), 'y': portal.Get_Attr('y')})
 
 
 hero = mission.Get_Entity({'hero':True})
-portal = portals[positions.pop()]
+portal = portals.pop()
 hero.Set_Attrs({'x': portal.Get_Attr('x'), 'y': portal.Get_Attr('y')})
 
 map()

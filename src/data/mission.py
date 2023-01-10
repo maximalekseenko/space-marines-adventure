@@ -16,11 +16,11 @@ class Mission:
 
     MAP_SIZE:tuple[int, int] = (0, 0)
 
-    DEFAULT_ATTRS:dict[str, Any] = dict()
+    ATTRS:dict[str, Any] = dict()
     '''Default attributes and their values, that applied upon creation.'''
-    DEFAULT_ENTITIES:list[tuple[str, dict[str, Any]]] = list()
+    ENTITIES:list[tuple[str, dict[str, Any]]] = list()
     '''Default entities and teir attributes, that added upon creation. \n\n Stored as [`<entity key>`, {`<variable key>`, `<variable value>`}]'''
-    DEFAULT_TILES:list[tuple[str, dict[str, Any]]] = list()
+    TILES:list[tuple[str, dict[str, Any]]] = list()
     '''Default tiles and teir attributes, that added upon creation. \n\n Stored as [`<tile key>`, {`<variable key>`, `<variable value>`}]'''
 
 
@@ -51,14 +51,14 @@ class Mission:
 
         # add defaults
         ## variables
-        self.Set_Attrs(self.DEFAULT_ATTRS)
+        self.Set_Attrs(self.ATTRS)
 
         ## entities
-        for __key, __attrs in self.DEFAULT_ENTITIES:
+        for __key, __attrs in self.ENTITIES:
             self.Create_Entity(__key, __attrs)
 
         ## tiles
-        for __key, __attrs in self.DEFAULT_TILES:
+        for __key, __attrs in self.TILES:
             self.Tile_Create(__key, __attrs)
 
 

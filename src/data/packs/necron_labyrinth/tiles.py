@@ -3,24 +3,24 @@ from data import Tile
 
 class Tile_Wall(Tile):
     KEY = "NLTWall"
-    DEFAULT_ATTRS = {
+    ATTRS = {
         'wall':True,
     }
 
 class Tile_Passage(Tile):
     KEY = "NLTPassage"
-    DEFAULT_ATTRS = {}
+    ATTRS = {}
 
 
 class Tile_Console(Tile):
     KEY = "NLTConsole"
-    DEFAULT_ATTRS = {
+    ATTRS = {
         'console':True,
         'active':False,
     }
 
 class Tile_Portal(Tile):
     KEY = "NLTPortal"
-    DEFAULT_ATTRS = {
+    ATTRS = {
         'portal':True,
     }
