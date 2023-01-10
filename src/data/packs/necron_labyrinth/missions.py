@@ -6,7 +6,7 @@ class Mission1(Mission):
 
     MAP_SIZE = (7, 6)
 
-    TILES = [
+    DEFAULT_TILES = [
         ("NLTWall", {'x':0,'y':0}),
         ("NLTWall", {'x':1,'y':0}),
         ("NLTWall", {'x':2,'y':0}),
@@ -56,7 +56,7 @@ class Mission1(Mission):
         ("NLTWall", {'x':6,'y':5}),
     ]
 
-    ENTITIES = [
+    DEFAULT_ENTITIES = [
         ("NLEHeroBoltgun", {'x':0,'y':0}),
         ("NLTNecronWarrior", {'x':1,'y':0}),
         ("NLTNecronWarrior", {'x':2,'y':0}),

@@ -1,8 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING: 
-    # from .campaign import Campaign
-    # from .map import Map
     from .entity import Entity
     from .tile import Tile
     from .database import DataBase
@@ -18,23 +16,23 @@ class Mission:
 
     MAP_SIZE:tuple[int, int] = (0, 0)
 
-    VARIABLES:dict[str, any] = dict()
-    '''Default variables. \n\n Export/Import parameter.'''
-    ENTITIES:list[tuple[str, dict[str, any]]] = list()
-    '''Default entities. \n\n Stored as [`<entity key>`, {`<variable key>`, `<variable value>`}] \n\n Export/Import parameter.'''
-    TILES:list[tuple[str, dict[str, any]]] = list()
-    '''Default tiles. \n\n Stored as [`<tile key>`, {`<variable key>`, `<variable value>`}] \n\n Export/Import parameter.'''
+    DEFAULT_ATTRS:dict[str, Any] = dict()
+    '''Default attributes and their values, that applied upon creation.'''
+    DEFAULT_ENTITIES:list[tuple[str, dict[str, Any]]] = list()
+    '''Default entities and teir attributes, that added upon creation. \n\n Stored as [`<entity key>`, {`<variable key>`, `<variable value>`}]'''
+    DEFAULT_TILES:list[tuple[str, dict[str, Any]]] = list()
+    '''Default tiles and teir attributes, that added upon creation. \n\n Stored as [`<tile key>`, {`<variable key>`, `<variable value>`}]'''
 
 
-    def __init__(self, __campaign:any) -> None:
+    def __init__(self, __campaign:Any) -> None:
 
         # create current
         ## campaign
         self.campaign = __campaign
         '''Current campaign.'''
 
-        ## variables
-        self.variables:dict[str, any] = dict()
+        ## attributes
+        self.attrs:dict[str, Any] = dict()
         '''Current variables.'''
 
         ## entity
@@ -44,156 +42,162 @@ class Mission:
         self.entity_free_id:int = 0
         '''Free id to give to newly created entity.'''
 
-        self.entity_grid:list[list[Tile]] = [[None for _ in range(self.MAP_SIZE[1])] for _ in range(self.MAP_SIZE[0])]  
-        '''Entities by position.'''
-
         ## tile
         self.tiles:list[Tile] = list()
-        '''Current tiles. \n\n Do not edit directly! Use corresponding functions!'''
+        '''Current tiles.'''
 
         self.tiles_free_id:int = 0
         '''Free id to give to newly created tile.'''
 
-        self.tile_grid:list[list[Tile]] = [[None for _ in range(self.MAP_SIZE[1])] for _ in range(self.MAP_SIZE[0])]  
-        '''Tiles by position.'''
-
         # add defaults
         ## variables
-        for __key, __value in self.VARIABLES.items():
-            self.Variable_Create(__key, __value)
+        self.Set_Attrs(self.DEFAULT_ATTRS)
 
         ## entities
-        for __key, __variables in self.ENTITIES:
-            self.Entity_Create(__key, __variables)
+        for __key, __attrs in self.DEFAULT_ENTITIES:
+            self.Create_Entity(__key, __attrs)
 
         ## tiles
-        for __key, __variables in self.TILES:
-            self.Tile_Create(__key, __variables)
-
-
-    def __abs_repr__(self) -> str:
-        __ret_str =  f"Mission(abstract):"
-        __ret_str += f"\n├key: {self.KEY}"
-
-        # variables
-        __ret_str += f"\n├variables:"
-        for __key, __value in self.VARIABLES: __ret_str += f"\n│├{__key}: {__value}"
-
-        # entities
-        # __ret_str += f"\n├entities: {self.ENTITIES}"
-        # TODO list
-
-        # tiles
-        __ret_str += f"\n├tiles:"
-        for __key, __variables in self.TILES: 
-            __ret_str += f"\n│├key: {__key}"
-            for __key, __value in __variables.items():
-                __ret_str += f"\n││├{__key}: {__value }"
-
-        # return
-        return __ret_str
+        for __key, __attrs in self.DEFAULT_TILES:
+            self.Tile_Create(__key, __attrs)
 
 
     def __repr__(self) -> str:
-        __ret_str =  f"Mission:"
-        __ret_str += f"\n├key: {self.KEY}"
-
-        # variables
-        __ret_str += f"\n├variables:"
-        for __key, __value in self.variables: __ret_str += f"\n│├{__key}: {__value}"
-
-        # entities
-        __ret_str += f"\n├entities: {self.entities}"
-        # TODO list
-
-        # tiles
-        __ret_str += f"\n├tiles:"
-        for __tile in self.tiles: __ret_str += "\n│├" + repr(__tile).replace('\n', "\n││")
-
-        # return
-        return __ret_str
+        return f"<{self.__class__.__name__} {self.attrs} {self.entities} {self.tiles}>"
 
 
-    # ----- Campaign functions -----
-    # ----- Variable functions -----
-    def Variable_Set(self, __key:str, __value:any) -> None:
-        self.variables[__key] = __value
+    def __str__(self) -> str:
+        return f"<{self.__class__.__name__}>"
 
 
-    def Variable_Create(self, __key:str, __value:any=None) -> None:
-        self.variables[__key] = __value
+    # Attributes
+    def Set_Attr(self, __key:str, __value:Any) -> None:
+        """Sets value to attribute by key."""
+
+        self.attrs[__key] = __value
 
 
-    def Variable_Exists(self, __key:str) -> bool:
-        return __key in self.variables
+    def Set_Attrs(self, __attrs:dict[str, Any]) -> None:
+        """Sets values to attributes by key."""
+
+        for __key, __value in __attrs.items():
+            self.Set_Attr(__key, __value)
 
 
-    def Variable_Get(self, __key:str) -> any:
-        return self.variables[__key]
+    def Get_Attr(self, __key:str) -> Any|None:
+        """Get attribute value by key.
+        \n If not found return None
+        """
+
+        return self.attrs.get(__key, None)
+
+
+    def Exists_Attr(self, __key:str) -> bool:
+        """Checks if attribute exists by key."""
+
+        return __key in self.attrs
+
+
+    def Exists_Attrs(self, __keys:list[str]) -> bool:
+        """Checks if attributes exists by keys."""
+
+        return all(__key in self.attrs for __key in __keys)
+
+
+    def Check_Attr(self, __key:str, __value:Any) -> bool:
+        """Checks if attribute has given value by key."""
+
+        return self.Get_Attr(__key) == __value
+
+
+    def Check_Attrs(self, __attrs:dict[str, Any]) -> bool:
+        """Checks if attributes has given values by keys."""
+
+        return all(self.Check_Attr(__key, __value) for __key, __value in __attrs.items())
 
 
     # ----- Entities functions -----
-    def Entity_Create(self, __key:str, __variables:dict[str, any] = dict()):
+    # entity
+    def Create_Entity(self, __key:str, __attrs:dict[str, Any] = dict()) -> None:
+        """Creates an entity with given attrs added to default."""
 
         # create new entity and give it a new id
         __new_entity = self.DATABASE.Get_Entity(__key)(self.entity_free_id)
         self.entity_free_id += 1
 
         # set variables
-        for __key, __value in __variables.items():
-            __new_entity.Variables_Set(__key, __value)
+        __new_entity.Set_Attrs(__attrs)
 
-        # add new entity to the lists
-        ## global
+        # add new entity to the list
         self.entities.append(__new_entity)
-        ## positional
-        self.entity_grid[__new_entity.Variables_Get('x')][__new_entity.Variables_Get('y')] = __new_entity
 
 
-    def Entity_Remove(self, __key:str):
-        pass
+    def Remove_Entity(self, __attrs:dict[str, Any], _all:bool=False) -> None:
+        """Removes existing entity that has attribute values.
+        \n If `all` is `True`, then all entities that fits will be removed. Only first one otherwise.
+        """
+        
+        for __i in range(len(self.entities)):
+            if self.entities[__i].Check_Attrs(__attrs):
+                self.entities.remove(__i)
+                if not _all: return
 
 
-    def Entity_Get_By_Position(self, __x, __y) -> Entity:
-        return self.entity_grid[__x][__y]
+    def Get_Entity(self, __attrs:dict[str, Any], _all:bool=False) -> Entity|list[Entity]:
+        """Returns existing entity that has attribute values.
+        \n If `all` is `True`, then all entities that fits will be removed. Only first one otherwise.
+        """
 
+        if _all: __ret_list = list()
 
-    def Entity_Get_By_Id(self, __id) -> Entity:
         for __entity in self.entities:
-            if __entity.id == __id:
-                return __entity
-        return None
-
+            if __entity.Check_Attrs(__attrs):
+                if _all: __ret_list.append(__entity)
+                else: return __entity
+        
+        if _all: return __ret_list
+        else: return None
 
 
     # ----- Tiles functions -----
-    def Tile_Create(self, __key:str, __variables:dict[str, any] = dict()):
+    def Tile_Create(self, __key:str, __attrs:dict[str, Any] = dict()) -> None:
+        """Creates a Tile with given attrs added to default."""
 
-        # create new tile and give it a new id
+        # create new and give it a new id
         __new_tile = self.DATABASE.Get_Tile(__key)(self.tiles_free_id)
         self.tiles_free_id += 1
 
         # set variables
-        for __key, __value in __variables.items():
-            __new_tile.Variables_Set(__key, __value)
+        __new_tile.Set_Attrs(__attrs)
 
-        # add new tile to the lists
-        ## global
+        # add new to the list
         self.tiles.append(__new_tile)
-        ## positional
-        self.tile_grid[__new_tile.Variables_Get('x')][__new_tile.Variables_Get('y')] = __new_tile
 
 
-    def Tile_Remove(self, __tile:type[Tile]):
-        pass
+    def Remove_Tile(self, __attrs:dict[str, Any], _all:bool=False) -> None:
+        """Removes existing tile that has attribute values.
+        \n If `all` is `True`, then all tiles that fits will be removed. Only first one otherwise.
+        """
+        
+        for __i in range(len(self.tiles)):
+            if self.tiles[__i].Check_Attrs(__attrs):
+                self.tiles.remove(__i)
+                if not _all: return
 
 
-    def Tile_Get_By_Position(self, __x, __y) -> Tile:
-        return self.tile_grid[__x][__y]
+    def Get_Tile(self, __attrs:dict[str, Any], _all:bool=False) -> Tile|list[Tile]:
+        """Returns existing tile that has attribute values.
+        \n If `all` is `True`, then all tiles that fits will be removed. Only first one otherwise.
+        """
 
+        if _all: __ret_list = list()
 
-    def Tile_Get_By_Id(self, __id) -> Tile:
         for __tile in self.tiles:
-            if __tile.id == __id:
-                return __tile
-        return None
+            if __tile.Check_Attrs(__attrs):
+                if _all: __ret_list.append(__tile)
+                else: return __tile
+        
+        if _all: return __ret_list
+        else: return None
+
+

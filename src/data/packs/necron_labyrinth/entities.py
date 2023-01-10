@@ -3,7 +3,7 @@ from data import Entity
 
 class Entity_HeroChainsword(Entity):
     KEY = "NLEHeroChainsword"
-    VARIABLES = {
+    DEFAULT_ATTRS = {
         'range':4,
         'actions':4,
         'hero':True,
@@ -11,7 +11,7 @@ class Entity_HeroChainsword(Entity):
 
 class Entity_HeroBoltgun(Entity):
     KEY = "NLEHeroBoltgun"
-    VARIABLES = {
+    DEFAULT_ATTRS = {
         'range':6,
         'actions':4,
         'hero':True,
@@ -20,7 +20,7 @@ class Entity_HeroBoltgun(Entity):
 
 class Entity_HeroFlamer(Entity):
     KEY = "NLTHeroFlamer"
-    VARIABLES = {
+    DEFAULT_ATTRS = {
         'range':3,
         'actions':3,
         'hero':True,
@@ -28,6 +28,6 @@ class Entity_HeroFlamer(Entity):
 
 class Entity_NecronWarrior(Entity):
     KEY = "NLTNecronWarrior"
-    VARIABLES = {
+    DEFAULT_ATTRS = {
         'enemy':True,
     }
