@@ -122,7 +122,8 @@ class Mission:
         """Creates an entity with given attrs added to default."""
 
         # create new entity and give it a new id
-        __new_entity = self.DATABASE.Get_Entity(__key)(self.entity_free_id)
+        __new_entity = self.DATABASE.Get_Entity(__key)(self)
+        __new_entity.Set_Attr('id', self.entity_free_id)
         self.entity_free_id += 1
 
         # set variables
@@ -164,7 +165,8 @@ class Mission:
         """Creates a Tile with given attrs added to default."""
 
         # create new and give it a new id
-        __new_tile = self.DATABASE.Get_Tile(__key)(self.tiles_free_id)
+        __new_tile = self.DATABASE.Get_Tile(__key)(self)
+        __new_tile.Set_Attr('id', self.tiles_free_id)
         self.tiles_free_id += 1
 
         # set variables
