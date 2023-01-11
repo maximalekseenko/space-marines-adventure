@@ -33,23 +33,12 @@ def map():
         print()
 
 map()
-print(repr(mission))
 
+mission.Event("OnBegin", [])
+# print(repr(mission))
 
-portals = mission.Get_Tile({'portal': True}, _all=True)
-
-import random
-random.shuffle(portals)
-
-
-for enemy in mission.Get_Entity({'enemy': True}, _all=True):
-    portal = portals.pop()
-    enemy.Set_Attrs({'x': portal.Get_Attr('x'), 'y': portal.Get_Attr('y')})
-
-
-hero = mission.Get_Entity({'hero':True})
-portal = portals.pop()
-hero.Set_Attrs({'x': portal.Get_Attr('x'), 'y': portal.Get_Attr('y')})
-
-map()
+__input = "DEATH IN SERVICE OF ABSOLUTION IS ITS OWN REWARD; FALUE IS ITS OWN PUNISHMENT"
+while __input:
+    map()
+    __input = input()
 

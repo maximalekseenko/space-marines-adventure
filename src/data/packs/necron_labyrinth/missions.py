@@ -1,4 +1,5 @@
 from data import Mission
+import random
 
 
 class Mission1(Mission):
@@ -63,3 +64,19 @@ class Mission1(Mission):
         ("NLTNecronWarrior", {'x':0,'y':0}),
     ]
 
+    def _Event_OnCreate(self, *args):
+        portals = self.Get_Tile({'portal': True}, _all=True)
+        random.shuffle(portals)
+
+        for enemy in self.Get_Entity({'enemy': True}, _all=True):
+            portal = portals.pop()
+            enemy.Set_Attrs({'x': portal.Get_Attr('x'), 'y': portal.Get_Attr('y')})
+
+        hero = self.Get_Entity({'hero':True})
+        portal = portals.pop()
+        hero.Set_Attrs({'x': portal.Get_Attr('x'), 'y': portal.Get_Attr('y')})
+
+
+    EVENTS = {
+        "OnCreate":"_Event_OnCreate"
+    }

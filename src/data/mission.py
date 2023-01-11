@@ -22,6 +22,8 @@ class Mission:
     '''Default entities and teir attributes, that added upon creation. \n\n Stored as [`<entity key>`, {`<variable key>`, `<variable value>`}]'''
     TILES:list[tuple[str, dict[str, Any]]] = list()
     '''Default tiles and teir attributes, that added upon creation. \n\n Stored as [`<tile key>`, {`<variable key>`, `<variable value>`}]'''
+    EVENTS:dict[str, function]
+    '''Default events.'''
 
 
     def __init__(self, __campaign:Any) -> None:
@@ -49,17 +51,22 @@ class Mission:
         self.tiles_free_id:int = 0
         '''Free id to give to newly created tile.'''
 
+        ## events
+        self.events:dict[str, function] = dict()
+        '''Current events.'''
+
         # add defaults
         ## variables
         self.Set_Attrs(self.ATTRS)
-
         ## entities
         for __key, __attrs in self.ENTITIES:
             self.Create_Entity(__key, __attrs)
-
         ## tiles
         for __key, __attrs in self.TILES:
             self.Tile_Create(__key, __attrs)
+        ## events
+        for __key, __value in self.EVENTS.items():
+            self.events[__key] = getattr(self, __value)
 
 
     def __repr__(self) -> str:
@@ -70,7 +77,7 @@ class Mission:
         return f"<{self.__class__.__name__}>"
 
 
-    # Attributes
+    # ----- Attributes functions -----
     def Set_Attr(self, __key:str, __value:Any) -> None:
         """Sets value to attribute by key."""
 
@@ -117,7 +124,6 @@ class Mission:
 
 
     # ----- Entities functions -----
-    # entity
     def Create_Entity(self, __key:str, __attrs:dict[str, Any] = dict()) -> None:
         """Creates an entity with given attrs added to default."""
 
@@ -202,4 +208,17 @@ class Mission:
         if _all: return __ret_list
         else: return None
 
+
+    # ----- Events functions -----
+    def Event(self, __key:str, __args:list):
+        """Initiate event with provided key and arguments."""
+
+        for __entity in self.entities:
+            __entity.Event(__key, __args)
+
+        for __tile in self.tiles:
+            __tile.Event(__key, __args)
+
+        __event = self.events.get(__key, None)
+        if __event: __event()
 

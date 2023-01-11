@@ -24,6 +24,8 @@ class Tile:
     * `wall` - `bool` used to determine movement for default entities.
     '''
 
+    EVENTS:dict[str, function] = dict()
+
 
     def __init__(self, __mission:Mission) -> None:
 
@@ -32,8 +34,15 @@ class Tile:
         self.attrs:dict[str, Any] = dict()
         '''Attributes that this Tile has.'''
 
+        self.events:dict[str, function] = dict()
+
         # set defaults
+        ## attributes
         self.Set_Attrs(self.ATTRS)
+
+        ## events
+        for __key, __value in self.EVENTS.items():
+            self.events[__key] = getattr(self, __value)
 
     
     def __repr__(self) -> str:
@@ -89,3 +98,9 @@ class Tile:
         """Checks if attributes has given values by keys."""
 
         return all(self.Check_Attr(__key, __value) for __key, __value in __attrs.items())
+
+
+    # Events
+    def Event(self, __key:str, __args:list):
+        __event = self.events.get(__key, None)
+        if __event: __event()
